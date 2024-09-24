@@ -1,0 +1,20 @@
+.header {
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header-title {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .user-info {
+    margin-left: 10px;
+  }
+  
+  .ant-badge-count {
+    background-color: #ff4d4f;
+  }
+
+  
+  
