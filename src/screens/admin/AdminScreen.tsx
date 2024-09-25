@@ -38,7 +38,7 @@ const AdminScreen = () => {
 
   return (
     <Layout style={{ minHeight: '100vh' }} className="admin-layout">
-      <Sider width={250} className="admin-sider" breakpoint="lg" collapsedWidth="0" trigger={null} collapsed={!drawerVisible}>
+      <Sider width={250}  breakpoint="lg" collapsedWidth="0" trigger={null} collapsed={!drawerVisible}>
         <AdminSidebar />
       </Sider>
       <Layout>

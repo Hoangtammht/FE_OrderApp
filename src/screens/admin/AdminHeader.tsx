@@ -19,15 +19,12 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ setDrawerVisible, auth }) => 
 
   return (
     <Header className="header" style={{ background: '#fff', padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      
-      {window.innerWidth < 768 && (
       <Button
         onClick={showDrawer}
         type="primary"
         icon={<MenuOutlined style={{ color: '#fff' }} />} // Set icon color to white
         style={{ marginLeft: '16px', backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
       />
-      )}
       <div className="header-left">
         <Text className="header-title" strong style={{ fontSize: '18px' }}>Admin Dashboard</Text>
       </div>
