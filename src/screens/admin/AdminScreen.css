@@ -2,9 +2,6 @@
     display: flex;
   }
   
-  .admin-sider {
-    transition: all 0.2s ease;
-  }
   
   @media (max-width: 768px) {
   
