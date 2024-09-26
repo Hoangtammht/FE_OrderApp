@@ -9,7 +9,9 @@ import AdminScreen from '../screens/admin/AdminScreen'
 import TeacherScreen from '../screens/TeacherScreen'
 import AccountantScreen from '../screens/AccountantScreen'
 import ChefScreen from '../screens/ChefScreen'
-import MenuManage from '../screens/manage/MenuManage'
+import MenuManage from '../screens/manage/menu/MenuManage'
+import Item from 'antd/es/list/Item'
+import ItemManage from '../screens/manage/item/ItemManage'
 
 const Routers = () => {
 
@@ -31,7 +33,8 @@ const Routers = () => {
     !auth.access_token ? (
       // <AuthRouter />
       // <AdminScreen />
-      <MenuManage />
+      // <MenuManage />
+      <ItemManage />
     ) : (
       auth.role === 1 ? <AdminScreen /> :
         auth.role === 2 ? <TeacherScreen /> :
