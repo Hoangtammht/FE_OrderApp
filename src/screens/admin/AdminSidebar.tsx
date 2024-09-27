@@ -1,8 +1,8 @@
 import { Menu } from 'antd';
 import { HomeOutlined, FileTextOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { removeAuth } from '../../reduxs/reducers/authReducer';
-import { useNavigate } from 'react-router-dom'; // Sử dụng useNavigate
 
 const AdminSidebar = () => {
   const dispatch = useDispatch();

@@ -42,7 +42,6 @@ const AdminScreen = () => {
         <AdminSidebar />
       </Sider>
       <Layout>
-        {/* Pass setDrawerVisible to AdminHeader */}
         <AdminHeader setDrawerVisible={setDrawerVisible} auth={auth} />
         <Content style={{ padding: '20px' }}>
           <Routes>

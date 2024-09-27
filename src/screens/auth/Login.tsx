@@ -24,7 +24,6 @@ const Login = () => {
             try {
                 const res = await LoginHandleApi('/user/loginUser', values, 'post');
                 if (res.data && res.data.User) {
-                    console.log('API response:', res.data.User);
                     localStorage.setItem(localDataNames.authData, JSON.stringify(res.data));
                     dispatch(addAuth({
                         access_token: res.data.access_token,

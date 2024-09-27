@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import AuthRouter from './AuthRouter'
-import MainRouter from './MainRouter'
 import { addAuth, authSelector, AuthState } from '../reduxs/reducers/authReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { localDataNames } from '../constants/appInfos'
 import { Spin } from 'antd'
 import AdminScreen from '../screens/admin/AdminScreen'
 import TeacherScreen from '../screens/TeacherScreen'
-import AccountantScreen from '../screens/AccountantScreen'
+import AccountantScreen from '../screens/accountant/AccountantScreen'
 import ChefScreen from '../screens/ChefScreen'
 import MenuManage from '../screens/manage/MenuManage'
 
@@ -29,13 +28,11 @@ const Routers = () => {
 
   return isLoading ? <Spin /> :
     !auth.access_token ? (
-      // <AuthRouter />
-      // <AdminScreen />
-      <MenuManage />
+      <AuthRouter />
     ) : (
       auth.role === 1 ? <AdminScreen /> :
         auth.role === 2 ? <TeacherScreen /> :
-          auth.role === 3 ? <ChefScreen /> :
+          auth.role === 3 ? <MenuManage /> :
             <AccountantScreen />
     );
 }
