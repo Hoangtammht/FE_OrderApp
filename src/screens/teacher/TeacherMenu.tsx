@@ -1,18 +1,18 @@
 import { Table, DatePicker, message, Avatar, Typography, Button, Modal, Form, Input, Select, InputNumber, Menu, Dropdown } from 'antd';
 import 'antd/dist/reset.css';
 import { UserOutlined } from '@ant-design/icons';
-import './MenuManage.css';
+import '../chef/MenuManage.css';
 import { useState, useEffect } from 'react';
 import moment from 'moment';
 import { Header } from 'antd/es/layout/layout';
 import { useSelector } from 'react-redux';
-import { authSelector } from '../../reduxs/reducers/authReducer';
+import { authSelector, removeAuth } from '../../reduxs/reducers/authReducer';
 import MenuHandleApi from '../../apis/MenuHandleApi';
 import { useDispatch } from 'react-redux'
-import { removeAuth } from '../../reduxs/reducers/authReducer';
 
 const { Text } = Typography;
 const { Option } = Select;
+
 interface MenuData {
     key: string;
     time: string;
@@ -27,6 +27,10 @@ interface MenuItem {
     dishName: string;
     serveDate: string;
 }
+interface OrderItem {
+    menuID: string;
+    dishName: string;
+}
 
 const createStyledMeals = (meals: string[]): JSX.Element => {
     return (
@@ -40,8 +44,9 @@ const createStyledMeals = (meals: string[]): JSX.Element => {
     );
 };
 
-export function MenuManage() {
+export function TeacherMenu() {
     const [menuData, setMenuData] = useState<MenuData[]>([]);
+    const [orderData, setOrderData] = useState<OrderItem[]>([]);
     const [selectedDate, setSelectedDate] = useState<moment.Moment | null>(moment());
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
@@ -86,7 +91,6 @@ export function MenuManage() {
                     }
                 });
             } catch (error) {
-                message.error(`Có lỗi xảy ra khi tải dữ liệu cho ${formattedDate}`);
             }
         }
 
@@ -119,17 +123,17 @@ export function MenuManage() {
         }
     }, [selectedDate]);
 
-    const handleAddMenu = async (values: any) => {
+    const handleOrderMeal = async (values: any) => {
         try {
-            await MenuHandleApi('/menu/addDishToMenu', {
-                scheduleID: values.scheduleID,
-                dishName: values.dishName,
-                price: values.price,
-                serveDate: values.serveDate.format('YYYY-MM-DD'),
-                userName: auth.userName
-            }, 'post');
+            const payload = {
+                createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+                menuID: values.menuID,
+                quantity: values.quantity,
+                userName: auth.userName,
+            };
 
-            message.success('Thêm món ăn thành công');
+            await MenuHandleApi('/order/createOrder', payload, 'post');
+            message.success('Đặt món ăn thành công');
             setIsModalVisible(false);
             form.resetFields();
             fetchWeeklyMenuData(selectedDate!);
@@ -172,97 +176,100 @@ export function MenuManage() {
         },
     ];
 
-    const handleLogout = () => {
-        dispatch(removeAuth({}));
-    };
-
-    const menu = (
-        <Menu>
-            <Menu.Item key="1" onClick={handleLogout}>
-                Đăng xuất
-            </Menu.Item>
-        </Menu>
-    );
-
     return (
         <div className="menu-container">
             <Header className="header" style={{ background: '#fff', padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div className="header-left">
-                    <Text className="header-title" strong style={{ fontSize: '25px' }}>Danh sách thực đơn</Text>
+                    <Text className="header-title" strong style={{ fontSize: '25px' }}>Danh sách thực đơn tuần này</Text>
                     <DatePicker
                         onChange={handleDateChange}
                         value={selectedDate}
                         format="DD/MM/YYYY"
                         style={{ marginLeft: '20px' }}
+                        disabled
                     />
                     <Button type="primary" onClick={() => setIsModalVisible(true)} style={{ marginLeft: '20px' }}>
-                        Thêm món ăn
+                        Đặt món
                     </Button>
                 </div>
                 <div className="header-right" style={{ display: 'flex', alignItems: 'center' }}>
-                    <Dropdown overlay={menu} trigger={['hover']} placement="bottomRight">
-                        <div className="user-info" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                            <Avatar icon={<UserOutlined />} />
-                            <Text style={{ marginLeft: '10px' }}>{auth.fullName || 'Đầu bếp'}</Text>
-                        </div>
-                    </Dropdown>
+                    <div className="user-info" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                        <Avatar icon={<UserOutlined />} />
+                        <Text style={{ marginLeft: '10px' }}>{auth.fullName || 'Đầu bếp'}</Text>
+                    </div>
                 </div>
             </Header>
 
             <Table<MenuData> columns={columns} dataSource={menuData} pagination={false} bordered style={{ overflowX: 'auto' }} />
 
             <Modal
-                title="Thêm món ăn"
+                title="Đặt món"
                 visible={isModalVisible}
                 onCancel={() => setIsModalVisible(false)}
                 footer={null}
             >
-                <Form form={form} onFinish={handleAddMenu}>
-                    <Form.Item
-                        name="dishName"
-                        label="Tên món ăn"
-                        rules={[{ required: true, message: 'Vui lòng nhập tên món ăn!' }]}
-                    >
-                        <Input placeholder="Nhập tên món ăn" />
-                    </Form.Item>
-                    <Form.Item
-                        name="scheduleID"
-                        label="Thời gian"
-                        rules={[{ required: true, message: 'Vui lòng chọn thời gian!' }]}
-                    >
-                        <Select placeholder="Chọn thời gian">
-                            <Option value={1}>Buổi sáng</Option>
-                            <Option value={2}>Buổi trưa</Option>
-                            <Option value={3}>Buổi chiều</Option>
-                        </Select>
-                    </Form.Item>
+                <Form form={form} onFinish={handleOrderMeal}>
                     <Form.Item
                         name="serveDate"
-                        label="Ngày phục vụ"
-                        rules={[{ required: true, message: 'Vui lòng chọn ngày phục vụ!' }]}
+                        label="Ngày đặt món"
+                        rules={[{ required: true, message: 'Vui lòng chọn ngày đặt món!' }]}
                     >
-                        <DatePicker format="DD/MM/YYYY" />
-                    </Form.Item>
-                    <Form.Item
-                        name="price"
-                        label="Giá (VNĐ)"
-                        rules={[{ required: true, message: 'Vui lòng nhập giá món ăn!' }]}
-                    >
-                        <InputNumber
-                            min={0}
-                            placeholder="Nhập giá món ăn"
+                        <DatePicker
+                            format="DD/MM/YYYY"
+                            defaultValue={selectedDate}
                             style={{ width: '100%' }}
+                            disabledDate={(current) => current && current < moment().endOf('day')}
+                            onChange={async (date) => {
+                                if (date) {
+                                    const formattedDate = date.format('YYYY-MM-DD');
+                                    try {
+                                        const response = await MenuHandleApi(`/menu/getMenuByDate?serveDate=${formattedDate}`, {}, 'get');
+                                        setOrderData(response.data);
+                                    } catch (error) {
+                                    }
+                                }
+                            }}
                         />
                     </Form.Item>
+
+                    <Form.Item
+                        name="menuID"
+                        label="Món ăn"
+                        rules={[{ required: true, message: 'Vui lòng chọn món ăn!' }]}
+                    >
+                        <Select
+                            placeholder="Chọn món ăn"
+                            style={{ width: '100%' }}
+                            showSearch
+                            optionFilterProp="children"
+                        >
+                            {orderData.map((meal: OrderItem) => (
+                                <Option key={meal.menuID} value={meal.menuID}>
+                                    {meal.dishName}
+                                </Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item
+                        name="quantity"
+                        label="Số lượng"
+                        rules={[{ required: true, message: 'Vui lòng nhập số lượng!' }]}
+                    >
+                        <InputNumber min={1} placeholder="Nhập số lượng" style={{ width: '100%' }} />
+                    </Form.Item>
+
                     <Form.Item>
                         <Button type="primary" htmlType="submit">
-                            Thêm
+                            Đặt món
                         </Button>
                     </Form.Item>
                 </Form>
             </Modal>
+
+
         </div>
     );
 }
 
-export default MenuManage;
+export default TeacherMenu;

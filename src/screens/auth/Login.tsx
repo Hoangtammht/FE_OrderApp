@@ -35,7 +35,7 @@ const Login = () => {
                 }
             } catch (error: any) {
                 console.log(error);
-                message.error(error.message);
+                message.error("Tài khoản hoặc mật khẩu không chính xác");
             } finally {
                 setIsLoading(false);
             }

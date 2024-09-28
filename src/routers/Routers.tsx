@@ -5,10 +5,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { localDataNames } from '../constants/appInfos'
 import { Spin } from 'antd'
 import AdminScreen from '../screens/admin/AdminScreen'
-import TeacherScreen from '../screens/TeacherScreen'
 import AccountantScreen from '../screens/accountant/AccountantScreen'
-import ChefScreen from '../screens/ChefScreen'
-import MenuManage from '../screens/manage/MenuManage'
+import MenuManage from '../screens/chef/MenuManage'
+import TeacherScreen from '../screens/teacher/TeacherScreen'
+import ChefScreen from '../screens/chef/ChefScreen'
 
 const Routers = () => {
 
@@ -32,7 +32,7 @@ const Routers = () => {
     ) : (
       auth.role === 1 ? <AdminScreen /> :
         auth.role === 2 ? <TeacherScreen /> :
-          auth.role === 3 ? <MenuManage /> :
+          auth.role === 3 ? <ChefScreen /> :
             <AccountantScreen />
     );
 }

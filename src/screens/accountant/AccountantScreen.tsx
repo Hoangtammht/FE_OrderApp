@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Table, DatePicker, Button, Input, Space, Typography, message, Row, Col } from 'antd';
+import { Table, DatePicker, Button, Input, Space, Typography, message, Row, Col, Dropdown, Avatar, Menu } from 'antd';
 import { SearchOutlined, FileExcelOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import moment from 'moment';
 import OrderHandleApi from '../../apis/OrderHandleApi';
+import { UserOutlined } from '@ant-design/icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { authSelector, removeAuth } from '../../reduxs/reducers/authReducer';
+import { Header } from 'antd/es/layout/layout';
+
+
 
 const { Title, Text } = Typography;
 
@@ -19,9 +25,11 @@ interface Order {
 const AccountantScreen = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
-  const [fromDate, setFromDate] = useState<string>(moment().format('YYYY-MM-DD')); // Default to current date
-  const [toDate, setToDate] = useState<string>(moment().format('YYYY-MM-DD')); // Default to current date
+  const [fromDate, setFromDate] = useState<string>(moment().format('YYYY-MM-DD')); 
+  const [toDate, setToDate] = useState<string>(moment().format('YYYY-MM-DD')); 
   const [teacherID, setTeacherID] = useState<string>('');
+  const auth = useSelector(authSelector);
+  const dispatch = useDispatch();
 
   const fetchOrders = async (from: string, to: string) => {
     setLoading(true);
@@ -73,11 +81,11 @@ const AccountantScreen = () => {
       key: 'totalPrice',
       render: (price: number) => `${price.toLocaleString()} VND`,
     },
-    {
-      title: 'Action',
-      key: 'action',
-      render: () => <Button type="primary">Confirm Order</Button>,
-    },
+    // {
+    //   title: 'Action',
+    //   key: 'action',
+    //   render: () => <Button type="primary">Confirm Order</Button>,
+    // },
   ];
 
   const onSearchTeacher = (value: string) => {
@@ -85,7 +93,7 @@ const AccountantScreen = () => {
   };
 
   useEffect(() => {
-    fetchOrders(fromDate, toDate); // Fetch orders for the selected date range
+    fetchOrders(fromDate, toDate);
   }, [fromDate, toDate]);
 
   const disabledFromDate = (current: any) => {
@@ -96,10 +104,31 @@ const AccountantScreen = () => {
     return current && current < moment(fromDate, 'YYYY-MM-DD').startOf('day');
   };
 
+  const handleLogout = () => {
+    dispatch(removeAuth({}));
+  };
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="1" onClick={handleLogout}>
+        Đăng xuất
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <div style={{ padding: '20px' }}>
-      <Title level={3}>Quản lý đơn hàng</Title>
-
+      <Header className="header" style={{ background: '#fff', padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <Title level={3}>Quản lý đơn hàng</Title>
+        <div className="header-right" style={{ display: 'flex', alignItems: 'center' }}>
+          <Dropdown overlay={menu} trigger={['hover']} placement="bottomRight">
+            <div className="user-info" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+              <Avatar icon={<UserOutlined />} />
+              <Text style={{ marginLeft: '10px' }}>{auth.fullName || 'Đầu bếp'}</Text>
+            </div>
+          </Dropdown>
+        </div>
+      </Header>
       <Space direction="vertical" style={{ width: '100%' }}>
         <Row gutter={[16, 16]} align="middle">
           <Col>
@@ -108,10 +137,10 @@ const AccountantScreen = () => {
               defaultValue={moment()}
               onChange={(date, dateString) => {
                 if (typeof dateString === 'string') {
-                  setFromDate(dateString); // Update "from" date
+                  setFromDate(dateString); 
                 }
               }}
-              disabledDate={disabledFromDate} // Ràng buộc ngày từ
+              disabledDate={disabledFromDate} 
               placeholder="From Date"
             />
           </Col>
@@ -122,10 +151,10 @@ const AccountantScreen = () => {
               defaultValue={moment()}
               onChange={(date, dateString) => {
                 if (typeof dateString === 'string') {
-                  setToDate(dateString); // Update "to" date
+                  setToDate(dateString); 
                 }
               }}
-              disabledDate={disabledToDate} // Ràng buộc ngày đến
+              disabledDate={disabledToDate} 
               placeholder="To Date"
             />
           </Col>
