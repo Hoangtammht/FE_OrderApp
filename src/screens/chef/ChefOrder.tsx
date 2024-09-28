@@ -26,8 +26,7 @@ const ChefOrder: React.FC = () => {
       const formattedDate = today.toISOString().split('T')[0];
 
       try {
-        const response = await OrderHandleApi(`/order/getListOrdersByDate?from=2024-09-26&to=2024-09-26`, {}, 'get');
-        // const response = await OrderHandleApi(`/order/getListOrdersByDate?from=${formattedDate}&to=${formattedDate}`, {}, 'get');
+        const response = await OrderHandleApi(`/order/getListOrdersByDate?from=${formattedDate}&to=${formattedDate}`, {}, 'get');
         const data = response.data;
 
         const aggregatedOrders: { [key: string]: Order } = {};

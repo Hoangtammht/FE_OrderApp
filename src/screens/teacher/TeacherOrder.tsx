@@ -37,7 +37,6 @@ const TeacherOrder: React.FC<TeacherOrderProps> = ({ userName }) => {
     fetchOrders();
   }, []);
 
-  // Cấu hình cột cho bảng
   const columns = [
     {
       title: 'Món ăn',
