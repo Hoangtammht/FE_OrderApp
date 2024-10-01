@@ -10,6 +10,7 @@ interface Order {
   className: string;
   quantity: number;
   totalPrice: number;
+  isConfirm: number;
   createdAt: string;
 }
 
@@ -18,7 +19,7 @@ const ChefOrder: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    let isMounted = true; // Flag to track if the component is still mounted
+    let isMounted = true;
 
     const fetchOrders = async () => {
       setLoading(true);
@@ -29,9 +30,9 @@ const ChefOrder: React.FC = () => {
         const response = await OrderHandleApi(`/order/getListOrdersByDate?from=${formattedDate}&to=${formattedDate}`, {}, 'get');
         const data = response.data;
 
+        const confirmedOrders = data.filter((order: Order) => order.isConfirm === 1);
         const aggregatedOrders: { [key: string]: Order } = {};
-
-        data.forEach((order: Order) => {
+        confirmedOrders.forEach((order: Order) => {
           const key = order.dishName;
           if (aggregatedOrders[key]) {
             aggregatedOrders[key].quantity += order.quantity;

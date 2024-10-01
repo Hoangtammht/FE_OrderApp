@@ -8,23 +8,23 @@ const { Header } = Layout;
 const { Text } = Typography;
 
 interface AdminHeaderProps {
-  setDrawerVisible: (visible: boolean) => void; // Function to set drawer visibility
+  // setDrawerVisible: (visible: boolean) => void; // Function to set drawer visibility
   auth: { fullName: string }; // Define the auth prop type
 }
 
-const AdminHeader: React.FC<AdminHeaderProps> = ({ setDrawerVisible, auth }) => {
-  const showDrawer = () => {
-    setDrawerVisible(true);
-  };
+const AdminHeader: React.FC<AdminHeaderProps> = ({ auth }) => {
+  // const showDrawer = () => {
+  //   setDrawerVisible(true);
+  // };
 
   return (
     <Header className="header" style={{ background: '#fff', padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <Button
+      {/* <Button
         onClick={showDrawer}
         type="primary"
-        icon={<MenuOutlined style={{ color: '#fff' }} />} // Set icon color to white
+        icon={<MenuOutlined style={{ color: '#fff' }} />} 
         style={{ marginLeft: '16px', backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
-      />
+      /> */}
       <div className="header-left">
         <Text className="header-title" strong style={{ fontSize: '18px' }}>Admin Dashboard</Text>
       </div>

@@ -1,4 +1,4 @@
-import { Table, DatePicker, message, Avatar, Typography, Button, Modal, Form, Input, Select, InputNumber, Menu, Dropdown } from 'antd';
+import { Table, DatePicker, message, Avatar, Typography, Button, Modal, Form, Select, InputNumber } from 'antd';
 import 'antd/dist/reset.css';
 import { UserOutlined } from '@ant-design/icons';
 import '../chef/MenuManage.css';
@@ -6,9 +6,8 @@ import { useState, useEffect } from 'react';
 import moment from 'moment';
 import { Header } from 'antd/es/layout/layout';
 import { useSelector } from 'react-redux';
-import { authSelector, removeAuth } from '../../reduxs/reducers/authReducer';
+import { authSelector } from '../../reduxs/reducers/authReducer';
 import MenuHandleApi from '../../apis/MenuHandleApi';
-import { useDispatch } from 'react-redux'
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -26,18 +25,19 @@ interface MenuItem {
     scheduleID: 1 | 2 | 3;
     dishName: string;
     serveDate: string;
+    quantity: number;
 }
 interface OrderItem {
     menuID: string;
     dishName: string;
 }
 
-const createStyledMeals = (meals: string[]): JSX.Element => {
+const createStyledMeals = (meals: { dishName: string; quantity: number }[]): JSX.Element => {
     return (
         <>
             {meals.map((meal, index) => (
                 <div key={index} style={{ fontSize: '14px', fontWeight: 'bold' }}>
-                    {meal}
+                    {meal.dishName} (Số lượng: {meal.quantity})
                 </div>
             ))}
         </>
@@ -51,7 +51,6 @@ export function TeacherMenu() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
     const auth = useSelector(authSelector);
-    const dispatch = useDispatch();
 
     const fetchWeeklyMenuData = async (date: moment.Moment) => {
         const newMenuData: MenuData[] = [];
@@ -59,7 +58,7 @@ export function TeacherMenu() {
 
         const startOfWeek = date.clone().startOf('isoWeek');
 
-        const scheduleGrouped: { [key: number]: { [key: number]: string[] } } = {
+        const scheduleGrouped: { [key: number]: { [key: number]: { dishName: string; quantity: number }[] } } = {
             1: {},
             2: {},
             3: {},
@@ -80,14 +79,12 @@ export function TeacherMenu() {
                 const data: MenuItem[] = response.data;
 
                 data.forEach((menuItem: MenuItem) => {
-                    const scheduleID = menuItem.scheduleID;
-                    const { dishName, serveDate } = menuItem;
-
+                    const { scheduleID, dishName, serveDate, quantity } = menuItem;
                     const serveDateMoment = moment(serveDate);
                     const dayIndex = serveDateMoment.isoWeekday() - 1;
 
                     if (dayIndex >= 0 && dayIndex < 5) {
-                        scheduleGrouped[scheduleID][dayIndex].push(dishName);
+                        scheduleGrouped[scheduleID][dayIndex].push({ dishName, quantity });
                     }
                 });
             } catch (error) {
@@ -128,8 +125,7 @@ export function TeacherMenu() {
             const payload = {
                 createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
                 menuID: values.menuID,
-                quantity: values.quantity,
-                userName: auth.userName,
+                quantity: values.quantity
             };
 
             await MenuHandleApi('/order/createOrder', payload, 'post');
@@ -138,7 +134,11 @@ export function TeacherMenu() {
             form.resetFields();
             fetchWeeklyMenuData(selectedDate!);
         } catch (error: any) {
-            message.error(error.message);
+            if (error.response && error.response.data && error.response.data.message) {
+                message.error(error.response.data.message); // Hiển thị thông báo lỗi từ API
+            } else {
+                message.error('Có lỗi xảy ra, vui lòng thử lại sau.'); // Thông báo lỗi chung nếu không có thông tin cụ thể
+            }
         }
     };
 
@@ -188,7 +188,12 @@ export function TeacherMenu() {
                         style={{ marginLeft: '20px' }}
                         disabled
                     />
-                    <Button type="primary" onClick={() => setIsModalVisible(true)} style={{ marginLeft: '20px' }}>
+                    <Button type="primary"
+                        onClick={async () => {
+                            setIsModalVisible(true);
+                        }
+                        }
+                        style={{ marginLeft: '20px' }}>
                         Đặt món
                     </Button>
                 </div>
@@ -216,9 +221,9 @@ export function TeacherMenu() {
                     >
                         <DatePicker
                             format="DD/MM/YYYY"
-                            defaultValue={selectedDate}
+                            // defaultValue={selectedDate}
                             style={{ width: '100%' }}
-                            disabledDate={(current) => current && current < moment().endOf('day')}
+                            disabledDate={(current) => current && current < moment().startOf('day')}
                             onChange={async (date) => {
                                 if (date) {
                                     const formattedDate = date.format('YYYY-MM-DD');
@@ -226,12 +231,12 @@ export function TeacherMenu() {
                                         const response = await MenuHandleApi(`/menu/getMenuByDate?serveDate=${formattedDate}`, {}, 'get');
                                         setOrderData(response.data);
                                     } catch (error) {
+                                        console.error(error);
                                     }
                                 }
                             }}
                         />
                     </Form.Item>
-
                     <Form.Item
                         name="menuID"
                         label="Món ăn"

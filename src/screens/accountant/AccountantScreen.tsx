@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Table, DatePicker, Button, Input, Space, Typography, message, Row, Col, Dropdown, Avatar, Menu } from 'antd';
+import { Table, DatePicker, Button, Input, Space, Typography, message, Row, Col, Dropdown, Avatar, Menu, Modal } from 'antd';
 import { SearchOutlined, FileExcelOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import moment from 'moment';
@@ -12,6 +12,7 @@ import { Header } from 'antd/es/layout/layout';
 
 
 const { Title, Text } = Typography;
+const { confirm } = Modal;
 
 interface Order {
   orderID: number;
@@ -25,8 +26,8 @@ interface Order {
 const AccountantScreen = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
-  const [fromDate, setFromDate] = useState<string>(moment().format('YYYY-MM-DD')); 
-  const [toDate, setToDate] = useState<string>(moment().format('YYYY-MM-DD')); 
+  const [fromDate, setFromDate] = useState<string>(moment().format('YYYY-MM-DD'));
+  const [toDate, setToDate] = useState<string>(moment().format('YYYY-MM-DD'));
   const [teacherID, setTeacherID] = useState<string>('');
   const auth = useSelector(authSelector);
   const dispatch = useDispatch();
@@ -42,11 +43,41 @@ const AccountantScreen = () => {
     }
   };
 
+  const handleConfirmOrder = async (orderID: number) => {
+    try {
+      const response = await OrderHandleApi(`/order/confirmOrder`,
+        { orderID: orderID, isConfirm: 1 },
+        'put');
+      if (response.status === 200) {
+        message.success('Xét duyệt thành công');
+        fetchOrders(fromDate, toDate);
+      } else {
+        message.error('Duyệt thất bại');
+      }
+    } catch (error: any) {
+      message.error('Duyệt thất bại');
+    }
+  };
+
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(orders);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders');
     XLSX.writeFile(workbook, 'orders.xlsx');
+  };
+
+  const showConfirm = (orderID: number) => {
+    confirm({
+      title: 'Bạn có chắc chắn muốn xét duyệt đơn hàng này không?',
+      okText: 'Xác nhận',
+      cancelText: 'Hủy',
+      onOk() {
+        handleConfirmOrder(orderID);
+      },
+      onCancel() {
+        console.log('Cancelled');
+      },
+    });
   };
 
   const columns = [
@@ -81,11 +112,27 @@ const AccountantScreen = () => {
       key: 'totalPrice',
       render: (price: number) => `${price.toLocaleString()} VND`,
     },
-    // {
-    //   title: 'Action',
-    //   key: 'action',
-    //   render: () => <Button type="primary">Confirm Order</Button>,
-    // },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text: any, record: any) => (
+        record.isConfirm === 0 ? (
+          <Button
+            type="primary"
+            onClick={() => showConfirm(record.orderID)}
+          >
+            Chờ xét duyệt
+          </Button>
+        ) : (
+          <Button
+            type="primary"
+            disabled
+          >
+            Đã duyệt
+          </Button>
+        )
+      ),
+    }
   ];
 
   const onSearchTeacher = (value: string) => {
@@ -137,10 +184,10 @@ const AccountantScreen = () => {
               defaultValue={moment()}
               onChange={(date, dateString) => {
                 if (typeof dateString === 'string') {
-                  setFromDate(dateString); 
+                  setFromDate(dateString);
                 }
               }}
-              disabledDate={disabledFromDate} 
+              disabledDate={disabledFromDate}
               placeholder="From Date"
             />
           </Col>
@@ -151,10 +198,10 @@ const AccountantScreen = () => {
               defaultValue={moment()}
               onChange={(date, dateString) => {
                 if (typeof dateString === 'string') {
-                  setToDate(dateString); 
+                  setToDate(dateString);
                 }
               }}
-              disabledDate={disabledToDate} 
+              disabledDate={disabledToDate}
               placeholder="To Date"
             />
           </Col>

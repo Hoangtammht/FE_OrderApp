@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Typography, message } from 'antd';
+import { Table, Typography, message, Tag } from 'antd';
 import OrderHandleApi from '../../apis/OrderHandleApi';
+import { CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import './TeacherOrder.css';
 
 const { Title } = Typography;
@@ -10,21 +11,18 @@ interface Order {
   className: string;
   quantity: number;
   totalPrice: number;
-  createdAt: string; // Thêm trường createdAt
+  isConfirm: number;
+  createdAt: string;
 }
 
-interface TeacherOrderProps {
-  userName: string;
-}
-
-const TeacherOrder: React.FC<TeacherOrderProps> = ({ userName }) => {
+const TeacherOrder = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const response = await OrderHandleApi(`/order/getOrderByTeacherName?userName=${userName}`, {}, 'get');
+      const response = await OrderHandleApi(`/order/getOrderByTeacherName`, {}, 'get');
       setOrders(response.data);
     } catch (error) {
       message.error('Có lỗi xảy ra khi tải đơn hàng');
@@ -65,6 +63,21 @@ const TeacherOrder: React.FC<TeacherOrderProps> = ({ userName }) => {
       key: 'createdAt',
       render: (text: string) => text,
     },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text: any, record: any) => (
+        record.isConfirm === 0 ? (
+          <Tag icon={<ClockCircleOutlined />} color="orange">
+            Chờ xét duyệt
+          </Tag>
+        ) : (
+          <Tag icon={<CheckCircleOutlined />} color="green">
+            Đã duyệt
+          </Tag>
+        )
+      ),
+    }
   ];
 
   return (

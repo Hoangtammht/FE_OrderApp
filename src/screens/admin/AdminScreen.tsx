@@ -13,36 +13,38 @@ const { Content, Sider } = Layout;
 
 const AdminScreen = () => {
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const location = useLocation();
+  // const location = useLocation();
   const auth = useSelector(authSelector);
 
-  const closeDrawer = () => {
-    setDrawerVisible(false);
-  };
+  // const closeDrawer = () => {
+  //   setDrawerVisible(false);
+  // };
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        closeDrawer();
-      }
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     if (window.innerWidth < 768) {
+  //       closeDrawer();
+  //     }
+  //   };
 
-    handleResize();
+  //   handleResize();
 
-    window.addEventListener('resize', handleResize);
+  //   window.addEventListener('resize', handleResize);
 
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [location]);
+  //   return () => {
+  //     window.removeEventListener('resize', handleResize);
+  //   };
+  // }, [location]);
 
   return (
     <Layout style={{ minHeight: '100vh' }} className="admin-layout">
-      <Sider width={250}  breakpoint="lg" collapsedWidth="0" trigger={null} collapsed={!drawerVisible}>
+      {/* <Sider width={250}  breakpoint="lg" collapsedWidth="0" trigger={null} collapsed={!drawerVisible}> */}
+      <Sider width={250}  breakpoint="lg" collapsedWidth="0" trigger={null}>
         <AdminSidebar />
       </Sider>
       <Layout>
-        <AdminHeader setDrawerVisible={setDrawerVisible} auth={auth} />
+        {/* <AdminHeader setDrawerVisible={setDrawerVisible} auth={auth} /> */}
+        <AdminHeader auth={auth} />
         <Content style={{ padding: '20px' }}>
           <Routes>
             <Route path="/" element={<Navigate to="/overview" replace />} />
