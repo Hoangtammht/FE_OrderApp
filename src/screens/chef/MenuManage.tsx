@@ -83,7 +83,7 @@ export function MenuManage() {
             scheduleGrouped[scheduleID][dayIndex].push({ dishName, quantity });
           }
         });
-      } catch (error) {}
+      } catch (error) { }
     }
 
     for (let j = 1; j <= 3; j++) {
@@ -186,42 +186,41 @@ export function MenuManage() {
 
   return (
     <div className="menu-container">
-      <Header
-        className="header"
-        style={{
-          background: '#fff',
-          padding: '0 20px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <div className="header-left">
-          <Text className="header-title" strong style={{ fontSize: '25px' }}>
+      <div style={{ backgroundColor: 'white', borderRadius: 5 }}>
+        <div className="header-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+          <Text className="header-title" strong style={{ fontSize: '18px', color: 'black', whiteSpace: 'nowrap', marginLeft: 5 }}>
             Danh sách thực đơn
           </Text>
-          <DatePicker
-            onChange={handleDateChange}
-            value={selectedDate}
-            format="DD/MM/YYYY"
-            style={{ marginLeft: '20px' }}
-          />
-          <Button type="primary" onClick={() => setIsModalVisible(true)} style={{ marginLeft: '20px' }}>
-            Thêm món ăn
-          </Button>
+          <div
+            className="user-info"
+            style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginRight: '10px', marginTop: '5px' }}
+          >
+            <Dropdown overlay={menu} trigger={['hover']} placement="bottomRight">
+              <div
+                className="user-info"
+                style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+              >
+                <Avatar icon={<UserOutlined />} />
+                <Text style={{ marginLeft: '5px' }}>{auth.fullName || 'Đầu bếp'}</Text>
+              </div>
+            </Dropdown>
+          </div>
         </div>
-        <div className="header-right" style={{ display: 'flex', alignItems: 'center' }}>
-          <Dropdown overlay={menu} trigger={['hover']} placement="bottomRight">
-            <div
-              className="user-info"
-              style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-            >
-              <Avatar icon={<UserOutlined />} />
-              <Text style={{ marginLeft: '10px' }}>{auth.fullName || 'Đầu bếp'}</Text>
-            </div>
-          </Dropdown>
+
+        <div className="header-bottom" style={{ alignItems: 'center', width: '100%', marginLeft: 5 }}>
+          <div className="form-items" style={{ flexDirection: 'column' }}>
+            <DatePicker
+              onChange={handleDateChange}
+              value={selectedDate}
+              format="DD/MM/YYYY"
+
+            />
+            <Button type="primary" onClick={() => setIsModalVisible(true)} style={{ marginLeft: '5px' }}>
+              Thêm món ăn
+            </Button>
+          </div>
         </div>
-      </Header>
+      </div>
 
       <Table<MenuData>
         columns={columns}
