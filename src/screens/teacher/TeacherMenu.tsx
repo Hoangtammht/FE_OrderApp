@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { authSelector } from '../../reduxs/reducers/authReducer';
 import MenuHandleApi from '../../apis/MenuHandleApi';
 
+
 const { Text } = Typography;
 const { Option } = Select;
 
@@ -178,34 +179,41 @@ export function TeacherMenu() {
 
     return (
         <div className="menu-container">
-            <Header className="header" style={{ background: '#fff', padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div className="header-left">
-                    <Text className="header-title" strong style={{ fontSize: '25px' }}>Danh sách thực đơn tuần này</Text>
-                    <DatePicker
-                        onChange={handleDateChange}
-                        value={selectedDate}
-                        format="DD/MM/YYYY"
-                        style={{ marginLeft: '20px' }}
-                        disabled
-                    />
-                    <Button type="primary"
-                        onClick={async () => {
-                            setIsModalVisible(true);
-                        }
-                        }
-                        style={{ marginLeft: '20px' }}>
-                        Đặt món
-                    </Button>
-                </div>
-                <div className="header-right" style={{ display: 'flex', alignItems: 'center' }}>
-                    <div className="user-info" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+            <div style={{ backgroundColor: 'white', borderRadius: 5, padding: '10px' }}>
+                <div className="header-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', width: '100%', gap: 15 }}>
+                    <Text className="header-title" strong style={{ fontSize: '18px', color: 'black', whiteSpace: 'nowrap', marginLeft: 5 }}>
+                        Danh sách thực đơn tuần này
+                    </Text>
+                    <div className="form-items" style={{ display: 'flex', alignItems: 'center', marginRight: 'auto' }}>
+                        <DatePicker
+                            onChange={handleDateChange}
+                            value={selectedDate}
+                            format="DD/MM/YYYY"
+                            style={{ backgroundColor: '#cacaca', border: 'none', padding: '5px', marginRight: '10px' }}
+                            disabled
+                        />
+                        <Button
+                            type="primary"
+                            onClick={async () => {
+                                setIsModalVisible(true);
+                            }}
+                            style={{ backgroundColor: 'blue', color: 'white', border: 'none' }}
+                        >
+                            Đặt món
+                        </Button>
+                    </div>
+                    <div className="user-info" style={{ display: 'flex', alignItems: 'center', marginTop: 5, marginLeft: '10px' }}>
                         <Avatar icon={<UserOutlined />} />
-                        <Text style={{ marginLeft: '10px' }}>{auth.fullName || 'Đầu bếp'}</Text>
+                        <Text style={{ marginLeft: '10px' }} className="auth-name">{auth.fullName || 'Đầu bếp'}</Text>
                     </div>
                 </div>
-            </Header>
 
-            <Table<MenuData> columns={columns} dataSource={menuData} pagination={false} bordered style={{ overflowX: 'auto' }} />
+                <div className="header-bottom" style={{ marginTop: '10px', width: '100%' }}>
+                    {/* Extra content below, if necessary */}
+                </div>
+            </div>
+
+            <Table<MenuData> columns={columns} dataSource={menuData} pagination={false} bordered style={{ overflowX: 'auto', width: '100%' }} />
 
             <Modal
                 title="Đặt món"
@@ -221,7 +229,6 @@ export function TeacherMenu() {
                     >
                         <DatePicker
                             format="DD/MM/YYYY"
-                            // defaultValue={selectedDate}
                             style={{ width: '100%' }}
                             disabledDate={(current) => current && current < moment().startOf('day')}
                             onChange={async (date) => {
@@ -271,10 +278,10 @@ export function TeacherMenu() {
                     </Form.Item>
                 </Form>
             </Modal>
-
-
         </div>
     );
+
+
 }
 
 export default TeacherMenu;
