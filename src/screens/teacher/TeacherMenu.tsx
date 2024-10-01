@@ -135,9 +135,9 @@ export function TeacherMenu() {
             fetchWeeklyMenuData(selectedDate!);
         } catch (error: any) {
             if (error.response && error.response.data && error.response.data.message) {
-                message.error(error.response.data.message); // Hiển thị thông báo lỗi từ API
+                message.error(error.response.data.message);
             } else {
-                message.error('Có lỗi xảy ra, vui lòng thử lại sau.'); // Thông báo lỗi chung nếu không có thông tin cụ thể
+                message.error('Có lỗi xảy ra, vui lòng thử lại sau.');
             }
         }
     };
