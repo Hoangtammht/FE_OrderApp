@@ -21,7 +21,7 @@ const Management = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
 
-  const [roles, setRoles] = useState<Role[]>([]); 
+  const [roles, setRoles] = useState<Role[]>([]);
 
   const fetchRoles = async () => {
     try {
@@ -157,11 +157,16 @@ const Management = () => {
           <Button type={selectedRole === 2 ? 'primary' : 'default'} onClick={() => setSelectedRole(2)}>
             Giáo Viên
           </Button>
-          <Button type={selectedRole === 3 ? 'primary' : 'default'} onClick={() => setSelectedRole(3)} style={{ marginLeft: '10px' }}>
+          <Button type={selectedRole === 3 ? 'primary' : 'default'} onClick={() => setSelectedRole(3)} style={{ marginLeft: '10px', flex: 1 }}>
             Đầu bếp
           </Button>
-          <Button type={selectedRole === 4 ? 'primary' : 'default'} onClick={() => setSelectedRole(4)} style={{ marginLeft: '10px' }}>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'row', flex: '1 1 45%' }}>
+          <Button type={selectedRole === 4 ? 'primary' : 'default'} onClick={() => setSelectedRole(4)} style={{ flex: 1 }}>
             Kế toán
+          </Button>
+          <Button type="primary" icon={<PlusOutlined />} onClick={showModal} style={{ marginLeft: '10px', flex: 1 }}>
+            Thêm tài khoản
           </Button>
         </div>
 
@@ -190,35 +195,35 @@ const Management = () => {
         okText="Tạo tài khoản"
         cancelText="Hủy"
       >
-        <Form layout='vertical' form={form} size='large'>
+        <Form layout="vertical" form={form} size="large">
           <Form.Item
             name={'fullName'}
             label="Full Name"
             rules={[{ required: true, message: 'Please enter full name' }]}
           >
-            <Input placeholder='Enter full name' allowClear maxLength={100} />
+            <Input placeholder="Enter full name" allowClear maxLength={100} />
           </Form.Item>
           <Form.Item
             name={'userName'}
             label="Username"
             rules={[{ required: true, message: 'Please enter username' }]}
           >
-            <Input placeholder='Enter username' allowClear maxLength={100} />
+            <Input placeholder="Enter username" allowClear maxLength={100} />
           </Form.Item>
           <Form.Item
             name={'password'}
             label="Password"
             rules={[{ required: true, message: 'Please enter password' }]}
           >
-            <Input.Password placeholder='Enter password' allowClear />
+            <Input.Password placeholder="Enter password" allowClear />
           </Form.Item>
           <Form.Item
             name={'roleID'}
             label="Role"
             rules={[{ required: true, message: 'Please select a role' }]}
           >
-            <Select placeholder='Select role' allowClear>
-              {roles.map(role => (
+            <Select placeholder="Select role" allowClear>
+              {roles.map((role) => (
                 <Option key={role.roleID} value={role.roleID}>
                   {role.roleName}
                 </Option>
@@ -229,6 +234,7 @@ const Management = () => {
       </Modal>
     </div>
   );
+
 };
 
 export default Management;

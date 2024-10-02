@@ -2,6 +2,7 @@ import { Layout, Avatar, Typography, Button } from 'antd';
 import { UserOutlined, MenuOutlined } from '@ant-design/icons';
 import './Header.css';
 
+
 const { Header } = Layout;
 const { Text } = Typography;
 
@@ -56,6 +57,8 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ auth, onToggleMenu }) => {
         <Text style={{ marginLeft: '10px' }}>{auth.fullName || 'Admin'}</Text>
       </div>
     </Header>
+
+
   );
 };
 

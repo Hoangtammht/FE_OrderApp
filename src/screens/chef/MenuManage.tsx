@@ -220,7 +220,7 @@ const MenuManage: React.FC<ChefProps> = ({ onToggleMenu })  => {
               <Text style={{ marginLeft: '10px' }}>{auth.fullName || 'Đầu bếp'}</Text>
             </div>
         </div>
-      </Header>
+      </div>
 
       <Table
         columns={columns}

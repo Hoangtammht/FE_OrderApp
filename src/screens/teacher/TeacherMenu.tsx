@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { authSelector } from '../../reduxs/reducers/authReducer';
 import MenuHandleApi from '../../apis/MenuHandleApi';
 
+
 const { Text } = Typography;
 const { Option } = Select;
 
@@ -219,12 +220,16 @@ const TeacherMenu: React.FC<TeacherProps> = ({ onToggleMenu }) => {
                 <div className="header-right" style={{ display: 'flex', alignItems: 'center' }}>
                     <div className="user-info" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
                         <Avatar icon={<UserOutlined />} />
-                        <Text style={{ marginLeft: '10px' }}>{auth.fullName || 'Đầu bếp'}</Text>
+                        <Text style={{ marginLeft: '10px' }} className="auth-name">{auth.fullName || 'Đầu bếp'}</Text>
                     </div>
                 </div>
-            </Header>
 
-            <Table<MenuData> columns={columns} dataSource={menuData} pagination={false} bordered style={{ overflowX: 'auto' }} />
+                <div className="header-bottom" style={{ marginTop: '10px', width: '100%' }}>
+                    {/* Extra content below, if necessary */}
+                </div>
+            </div>
+
+            <Table<MenuData> columns={columns} dataSource={menuData} pagination={false} bordered style={{ overflowX: 'auto', width: '100%' }} />
 
             <Modal
                 title="Đặt món"
@@ -240,7 +245,6 @@ const TeacherMenu: React.FC<TeacherProps> = ({ onToggleMenu }) => {
                     >
                         <DatePicker
                             format="DD/MM/YYYY"
-                            // defaultValue={selectedDate}
                             style={{ width: '100%' }}
                             disabledDate={(current) => current && current < moment().startOf('day')}
                             onChange={async (date) => {
@@ -290,10 +294,10 @@ const TeacherMenu: React.FC<TeacherProps> = ({ onToggleMenu }) => {
                     </Form.Item>
                 </Form>
             </Modal>
-
-
         </div>
     );
+
+
 }
 
 export default TeacherMenu;
