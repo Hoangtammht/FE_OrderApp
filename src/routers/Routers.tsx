@@ -28,7 +28,7 @@ const Routers = () => {
 
   return isLoading ? <Spin /> :
     !auth.access_token ? (
-      <ChefScreen />
+      <AdminScreen />
     ) : (
       auth.role === 1 ? <AdminScreen /> :
         auth.role === 2 ? <TeacherScreen /> :
