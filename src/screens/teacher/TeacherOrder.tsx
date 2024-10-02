@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Typography, message, Tag } from 'antd';
+import { Table, Typography, message, Tag, Button } from 'antd';
 import OrderHandleApi from '../../apis/OrderHandleApi';
-import { CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, ClockCircleOutlined, MenuOutlined } from '@ant-design/icons';
+
 import './TeacherOrder.css';
+import { Header } from 'antd/es/layout/layout';
 
 const { Title } = Typography;
 
@@ -15,7 +17,11 @@ interface Order {
   createdAt: string;
 }
 
-const TeacherOrder = () => {
+interface TeacherProps {
+  onToggleMenu: () => void;
+}
+
+const TeacherOrder: React.FC<TeacherProps> = ({ onToggleMenu }) => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -82,9 +88,17 @@ const TeacherOrder = () => {
 
   return (
     <div className="teacher-order-container">
-      <Title level={3} style={{ textAlign: 'center', marginBottom: '20px' }}>
-        Danh sách Đơn Hàng của Giáo Viên
-      </Title>
+      <div className="header-container">
+        <Button
+          type="text"
+          icon={<MenuOutlined />}
+          onClick={onToggleMenu}
+          className="menu-button"
+        />
+        <Title level={3} className="header-title">
+          Các đơn Hàng của Giáo Viên
+        </Title>
+      </div>
       <Table
         columns={columns}
         dataSource={orders}
@@ -92,10 +106,14 @@ const TeacherOrder = () => {
         loading={loading}
         pagination={false}
         bordered
+        scroll={{ x: true }}
+        style={{ overflowX: 'auto' }}
         className="teacher-order-table"
       />
     </div>
-  );
+
+
+  )
 };
 
 export default TeacherOrder;

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Typography, message } from 'antd';
+import { Button, Table, Typography, message } from 'antd';
 import OrderHandleApi from '../../apis/OrderHandleApi';
 import './ChefOrder.css';
+import { MenuOutlined } from '@ant-design/icons';
+
 
 const { Title } = Typography;
 
@@ -14,7 +16,11 @@ interface Order {
   createdAt: string;
 }
 
-const ChefOrder: React.FC = () => {
+interface ChefProps {
+  onToggleMenu: () => void;
+}
+
+const ChefOrder: React.FC<ChefProps> = ({ onToggleMenu })  => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -46,9 +52,7 @@ const ChefOrder: React.FC = () => {
           setOrders(Object.values(aggregatedOrders));
         }
       } catch (error) {
-        if (isMounted) {
-          message.error('Có lỗi xảy ra khi tải đơn hàng');
-        }
+        
       } finally {
         if (isMounted) {
           setLoading(false);
@@ -84,6 +88,13 @@ const ChefOrder: React.FC = () => {
 
   return (
     <div className="chef-order-container">
+      <Button
+          type="text"
+          icon={<MenuOutlined />}
+          onClick={onToggleMenu}
+          className="menu-button"
+          style={{ marginRight: '45px', fontSize: '20px', color: 'black',paddingBottom: '250px' }}
+        />
       <Title level={3} style={{ textAlign: 'center', marginBottom: '20px' }}>
         Danh sách Đơn Hàng của Đầu Bếp hôm nay
       </Title>

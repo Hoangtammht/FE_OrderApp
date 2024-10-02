@@ -8,8 +8,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { authSelector, removeAuth } from '../../reduxs/reducers/authReducer';
 import { Header } from 'antd/es/layout/layout';
-
-
+import './AccountantScreen.css'
 
 const { Title, Text } = Typography;
 const { confirm } = Modal;
@@ -165,17 +164,18 @@ const AccountantScreen = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <Header className="header" style={{ background: '#fff', padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-        <Title level={3}>Quản lý đơn hàng</Title>
-        <div className="header-right" style={{ display: 'flex', alignItems: 'center' }}>
-          <Dropdown overlay={menu} trigger={['hover']} placement="bottomRight">
-            <div className="user-info" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-              <Avatar icon={<UserOutlined />} />
-              <Text style={{ marginLeft: '10px' }}>{auth.fullName || 'Đầu bếp'}</Text>
-            </div>
-          </Dropdown>
+      <Header className="header">
+        <div className="header-left">
+          <Title level={3} className="text-title">Quản lý đơn hàng</Title>
         </div>
+        <Dropdown overlay={menu} trigger={['hover']} placement="bottomRight">
+          <div className="header-right">
+            <Avatar icon={<UserOutlined />} />
+            <Text className="text-content">{auth.fullName || 'Kế toán'}</Text>
+          </div>
+        </Dropdown>
       </Header>
+
       <Space direction="vertical" style={{ width: '100%' }}>
         <Row gutter={[16, 16]} align="middle">
           <Col>
@@ -209,7 +209,7 @@ const AccountantScreen = () => {
 
         <Space>
           <Input
-            placeholder="Search by Teacher ID"
+            placeholder="Search by Teacher name"
             prefix={<SearchOutlined />}
             onChange={(e) => onSearchTeacher(e.target.value)}
           />

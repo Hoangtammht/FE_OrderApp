@@ -3,6 +3,8 @@ import { Table, Tag, Typography, Button, Input, message, Modal, Form, Select } f
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import './Management.css';
 import ListUserHandleApi from '../../apis/ListUserHandleApi';
+import './AdminScreen.css';
+
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -27,7 +29,6 @@ const Management = () => {
       setRoles(response.data);
     } catch (error) {
       console.error('Failed to fetch roles:', error);
-      message.error('Failed to load roles');
     }
   };
 
@@ -40,7 +41,6 @@ const Management = () => {
       }
     } catch (error: any) {
       console.error(error);
-      message.error('Failed to load users');
     } finally {
       setIsLoading(false);
     }
@@ -152,7 +152,7 @@ const Management = () => {
   return (
     <div className="management-content">
       <Title level={2}>Quản lý và phân quyền</Title>
-      <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between' }}>
+      <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
         <div>
           <Button type={selectedRole === 2 ? 'primary' : 'default'} onClick={() => setSelectedRole(2)}>
             Giáo Viên
@@ -165,20 +165,22 @@ const Management = () => {
           </Button>
         </div>
 
-        <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
+        <Button style={{marginTop: '10px'}} type="primary" icon={<PlusOutlined />} onClick={showModal}>
           Thêm tài khoản
         </Button>
       </div>
 
-      <Table
-        columns={columns}
-        dataSource={users}
-        loading={isLoading}
-        pagination={{ pageSize: 7 }}
-        rowKey="userID"
-        bordered
-        scroll={{ x: 'max-content' }}
-      />
+      <div className="table-responsive">
+        <Table
+          columns={columns}
+          dataSource={users}
+          loading={isLoading}
+          pagination={{ pageSize: 7 }}
+          rowKey="userID"
+          bordered
+          scroll={{ x: 'max-content' }}
+        />
+      </div>
 
       <Modal
         title="Thêm tài khoản"

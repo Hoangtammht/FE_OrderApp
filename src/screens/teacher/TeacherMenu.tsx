@@ -1,7 +1,7 @@
 import { Table, DatePicker, message, Avatar, Typography, Button, Modal, Form, Select, InputNumber } from 'antd';
 import 'antd/dist/reset.css';
-import { UserOutlined } from '@ant-design/icons';
-import '../chef/MenuManage.css';
+import { UserOutlined, MenuOutlined } from '@ant-design/icons';
+import './TeacherMenu.css';
 import { useState, useEffect } from 'react';
 import moment from 'moment';
 import { Header } from 'antd/es/layout/layout';
@@ -44,7 +44,11 @@ const createStyledMeals = (meals: { dishName: string; quantity: number }[]): JSX
     );
 };
 
-export function TeacherMenu() {
+interface TeacherProps {
+    onToggleMenu: () => void;
+}
+
+const TeacherMenu: React.FC<TeacherProps> = ({ onToggleMenu }) => {
     const [menuData, setMenuData] = useState<MenuData[]>([]);
     const [orderData, setOrderData] = useState<OrderItem[]>([]);
     const [selectedDate, setSelectedDate] = useState<moment.Moment | null>(moment());
@@ -178,9 +182,24 @@ export function TeacherMenu() {
 
     return (
         <div className="menu-container">
-            <Header className="header" style={{ background: '#fff', padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Header className="header"
+                style={{
+                    background: '#fff',
+                    padding: '0 20px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                }}>
+                <Button
+                    type="text"
+                    icon={<MenuOutlined />}
+                    onClick={onToggleMenu}
+                    className="menu-button"
+                    style={{ marginRight: '45px', fontSize: '20px', lineHeight: '55px', color: 'black' }}
+                />
                 <div className="header-left">
-                    <Text className="header-title" strong style={{ fontSize: '25px' }}>Danh sách thực đơn tuần này</Text>
+                    <Text className="header-title" strong style={{ fontSize: '22px' }}>Thực đơn tuần này</Text>
                     <DatePicker
                         onChange={handleDateChange}
                         value={selectedDate}

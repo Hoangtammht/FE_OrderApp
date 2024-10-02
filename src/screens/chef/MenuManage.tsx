@@ -1,7 +1,6 @@
 import { Table, DatePicker, message, Avatar, Typography, Button, Modal, Form, Input, Select, InputNumber, Dropdown, Menu } from 'antd';
 import 'antd/dist/reset.css';
-import { UserOutlined } from '@ant-design/icons';
-import './MenuManage.css';
+import { UserOutlined, MenuOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import moment from 'moment';
 import { Header } from 'antd/es/layout/layout';
@@ -9,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { authSelector, removeAuth } from '../../reduxs/reducers/authReducer';
 import MenuHandleApi from '../../apis/MenuHandleApi';
 import { useDispatch } from 'react-redux';
+import './MenuManage.css';
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -42,7 +42,11 @@ const createStyledMeals = (meals: { dishName: string; quantity: number }[]): JSX
   );
 };
 
-export function MenuManage() {
+interface ChefProps {
+  onToggleMenu: () => void;
+}
+
+const MenuManage: React.FC<ChefProps> = ({ onToggleMenu })  => {
   const [menuData, setMenuData] = useState<MenuData[]>([]);
   const [selectedDate, setSelectedDate] = useState<moment.Moment | null>(moment());
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -83,7 +87,7 @@ export function MenuManage() {
             scheduleGrouped[scheduleID][dayIndex].push({ dishName, quantity });
           }
         });
-      } catch (error) {}
+      } catch (error) { }
     }
 
     for (let j = 1; j <= 3; j++) {
@@ -172,18 +176,6 @@ export function MenuManage() {
     },
   ];
 
-  const handleLogout = () => {
-    dispatch(removeAuth({}));
-  };
-
-  const menu = (
-    <Menu>
-      <Menu.Item key="1" onClick={handleLogout}>
-        Đăng xuất
-      </Menu.Item>
-    </Menu>
-  );
-
   return (
     <div className="menu-container">
       <Header
@@ -194,43 +186,50 @@ export function MenuManage() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          flexWrap: 'wrap',
         }}
       >
-        <div className="header-left">
-          <Text className="header-title" strong style={{ fontSize: '25px' }}>
+        <Button
+          type="text"
+          icon={<MenuOutlined />}
+          onClick={onToggleMenu}
+          className="menu-button"
+          style={{ marginRight: '45px', fontSize: '20px', lineHeight: '45px', color: 'black' }}
+        />
+        <div className="header-left" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
+          <Text className="header-title" strong style={{ fontSize: '25px', flex: '1 1 auto' }}>
             Danh sách thực đơn
           </Text>
           <DatePicker
             onChange={handleDateChange}
             value={selectedDate}
             format="DD/MM/YYYY"
-            style={{ marginLeft: '20px' }}
+            style={{ marginLeft: '20px', marginTop: '10px', flex: '1 1 auto' }}
           />
-          <Button type="primary" onClick={() => setIsModalVisible(true)} style={{ marginLeft: '20px' }}>
+          <Button
+            type="primary"
+            onClick={() => setIsModalVisible(true)}
+            style={{ marginLeft: '20px', marginTop: '10px', flex: '1 1 auto' }}
+          >
             Thêm món ăn
           </Button>
         </div>
-        <div className="header-right" style={{ display: 'flex', alignItems: 'center' }}>
-          <Dropdown overlay={menu} trigger={['hover']} placement="bottomRight">
-            <div
-              className="user-info"
-              style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-            >
+        <div className="header-right" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div className="user-info" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', flex: '1 1 auto' }}>
               <Avatar icon={<UserOutlined />} />
               <Text style={{ marginLeft: '10px' }}>{auth.fullName || 'Đầu bếp'}</Text>
             </div>
-          </Dropdown>
         </div>
       </Header>
 
-      <Table<MenuData>
+      <Table
         columns={columns}
         dataSource={menuData}
         pagination={false}
         bordered
+        scroll={{ x: true }}
         style={{ overflowX: 'auto' }}
       />
-
       <Modal
         title="Thêm món ăn"
         visible={isModalVisible}

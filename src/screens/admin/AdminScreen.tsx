@@ -1,50 +1,56 @@
-import { Layout } from 'antd';
-import { BrowserRouter, Route, Routes, Navigate, useLocation } from 'react-router-dom';
+import { Layout, Drawer } from 'antd';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { authSelector } from '../../reduxs/reducers/authReducer';
 import AdminSidebar from './AdminSidebar';
 import AdminDashboardContent from './AdminDashboard';
 import Management from './Management';
-import { useEffect, useState } from 'react';
-import AdminHeader from './AdminHeader'; // Import the AdminHeader component
+import AdminHeader from './AdminHeader';
 import './AdminScreen.css';
+import { useEffect, useState } from 'react';
 
 const { Content, Sider } = Layout;
 
 const AdminScreen = () => {
-  const [drawerVisible, setDrawerVisible] = useState(false);
-  // const location = useLocation();
+  const [collapsed, setCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
   const auth = useSelector(authSelector);
 
-  // const closeDrawer = () => {
-  //   setDrawerVisible(false);
-  // };
+  const handleResize = () => {
+    setIsMobile(window.innerWidth < 768);
+  };
 
-  // useEffect(() => {
-  //   const handleResize = () => {
-  //     if (window.innerWidth < 768) {
-  //       closeDrawer();
-  //     }
-  //   };
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+    handleResize();
 
-  //   handleResize();
-
-  //   window.addEventListener('resize', handleResize);
-
-  //   return () => {
-  //     window.removeEventListener('resize', handleResize);
-  //   };
-  // }, [location]);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <Layout style={{ minHeight: '100vh' }} className="admin-layout">
-      {/* <Sider width={250}  breakpoint="lg" collapsedWidth="0" trigger={null} collapsed={!drawerVisible}> */}
-      <Sider width={250}  breakpoint="lg" collapsedWidth="0" trigger={null}>
-        <AdminSidebar />
-      </Sider>
+       {isMobile ? (
+        <Drawer
+          title="Menu"
+          placement="left"
+          onClose={() => setCollapsed(false)}
+          visible={collapsed}
+          bodyStyle={{ padding: 0 }}
+        >
+          <AdminSidebar setCollapsed={setCollapsed} isMobile={isMobile} />  {/* Pass isMobile here */}
+        </Drawer>
+      ) : (
+        <Sider width={250} trigger={null} collapsible collapsed={collapsed} breakpoint="lg">
+          <AdminSidebar setCollapsed={setCollapsed} isMobile={isMobile} />  {/* Pass isMobile here */}
+        </Sider>
+      )}
+
       <Layout>
-        {/* <AdminHeader setDrawerVisible={setDrawerVisible} auth={auth} /> */}
-        <AdminHeader auth={auth} />
+        <AdminHeader
+          auth={auth}
+          onToggleMenu={() => setCollapsed(!collapsed)}
+        />
         <Content style={{ padding: '20px' }}>
           <Routes>
             <Route path="/" element={<Navigate to="/overview" replace />} />
@@ -55,10 +61,11 @@ const AdminScreen = () => {
       </Layout>
     </Layout>
   );
-}
+};
 
 export default () => (
   <BrowserRouter>
     <AdminScreen />
   </BrowserRouter>
 );
+
